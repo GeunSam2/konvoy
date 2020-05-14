@@ -158,7 +158,8 @@ spec:
 ./konvoy up
 ```
 
-콘보이 설치 중, add on deploy 단계로 진행이 넘어가면, controlplane노드에 접속하여 미리 준비한 pv.yaml 파일을 이용하여 pv생성을 진행한다.
+콘보이 설치 중 add on deploy 단계로 진행이 넘어가면, controlplane노드에 접속하여 미리 준비한 pv.yaml 파일을 이용하여 pv생성을 진행한다.
+(타이밍이 중요함)
 
 ```yaml
 KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f pv.yaml
