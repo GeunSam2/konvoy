@@ -66,3 +66,104 @@ ssh-keygen
 ```bash
 ssh-copy-id root@hostname
 ```
+
+**pv생성**
+
+controlplane 노드를 포함한 모든 cluster의 노드들에 pv로 사용할 디렉토리를 생성해준다.
+
+```bash
+#예시
+
+mkdir -p /pv/konvoy/pv-10-1
+mkdir -p /pv/konvoy/pv-10-2
+mkdir -p /pv/konvoy/pv-10-3
+mkdir -p /pv/konvoy/pv-10-4
+mkdir -p /pv/konvoy/pv-10-5
+mkdir -p /pv/konvoy/pv-50-1
+mkdir -p /pv/konvoy/pv-50-2
+mkdir -p /pv/konvoy/pv-50-3
+mkdir -p /pv/konvoy/pv-50-4
+```
+
+`pv.yaml` 파일의 내용을 생성할 pv의 용량과 경로에 맞게 수정하여 controlplane노드에 위치시킨다. 아래 예시 파일은 10GB pv 3개, 50GB pv 1개를 생성하는 예시이다.
+
+```yaml
+#파일예시
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: konvoy-pv-volume-10-1
+  labels:
+    type: local
+spec:
+  storageClassName: localvolumeprovisioner
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/pv/konvoy/pv-10-1"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: konvoy-pv-volume-10-2
+  labels:
+    type: local
+spec:
+  storageClassName: localvolumeprovisioner
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/pv/konvoy/pv-10-2"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: konvoy-pv-volume-10-3
+  labels:
+    type: local
+spec:
+  storageClassName: localvolumeprovisioner
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/pv/konvoy/pv-10-3"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: konvoy-pv-volume-50-1
+  labels:
+    type: local
+spec:
+  storageClassName: localvolumeprovisioner
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/pv/konvoy/pv-50-1"
+---
+```
+
+위의 내용들까지 준비가 되었다면, konvoy 설치 준비가 다 되었다.
+
+```yaml
+./konvoy up
+```
+
+콘보이 설치 중, add on deploy 단계로 진행이 넘어가면, controlplane노드에 접속하여 미리 준비한 pv.yaml 파일을 이용하여 pv생성을 진행한다.
+
+```yaml
+KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f pv.yaml
+```
+
+기다린다.
+
+끝 ㅇㅈ?
